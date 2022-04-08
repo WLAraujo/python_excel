@@ -1,0 +1,578 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Sobre o Caderno\n",
+    "\n",
+    "Nesse caderno será feita uma transcrição de um dataframe em `.csv` para uma tabela formata e estilizada no excel usando a biblioteca openpyxl, essa biblioteca permite a manipulação de arquivos `.xlsx` usando códigos python. Para isso é escolhido um workbook (arquivo `.xlsx`), e dentro desse workbook escolhemos uma sheet (planilha) para trabalhar.\n",
+    "\n",
+    "Além de fazer a transcrição do dataframe de um `.csv` para o excel também serão apresentados alguns comandos básicos de estilização no excel."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 0 - Importações"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 45,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "from openpyxl import load_workbook\n",
+    "from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font, colors"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 1 - Definindo workbook e worksheet"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 46,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Importando o workbook modelo que trabalharemos sobre\n",
+    "arquivo = load_workbook(filename='Pasta1.xlsx')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 47,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "['Planilha1', 'Planilha2', 'Planilha3']\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Visualizando as planilhas nesse workbook\n",
+    "print(arquivo.sheetnames)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 48,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Para começar a trabalhar temos que definir qual a nossa planilha de trabalho (worksheet)\n",
+    "ws = arquivo['Planilha1']"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 2 - Definindo alguns estilos para uso\n",
+    "\n",
+    "Definindo alguns estilos usando a openpyxl.styles.\n",
+    "Para ver mais coisas sobre estilos acesse https://openpyxl.readthedocs.io/en/stable/styles.html.\n",
+    "Sobre alinhamento https://openpyxl.readthedocs.io/en/stable/api/openpyxl.styles.alignment.html."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 49,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Estilos do cabeçalho\n",
+    "fonte_cabecalho = Font(name='Calibri', size=12, bold=True, italic=False, vertAlign=None, underline='none', strike=False, color='FFFFFF')\n",
+    "estilo_borda = Side(border_style=\"medium\", color='FFFFFF')\n",
+    "borda_cabecalho = Border(left=estilo_borda, right= estilo_borda, top=estilo_borda, bottom=estilo_borda, vertical= estilo_borda, horizontal=estilo_borda)\n",
+    "alinhamento_centralizado = Alignment(horizontal='center', vertical='center')\n",
+    "cor_celulas_cabecalho = PatternFill(\"solid\", fgColor=\"000066CC\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 50,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Estilos da tabela\n",
+    "fonte_tabela = Font(name='Calibri', size=12, bold=False, italic=False, vertAlign=None, underline='none', color='00333333')\n",
+    "cor_celulas__tabela = PatternFill(\"solid\", fgColor=\"00FFFFFF\")\n",
+    "estilo_borda_lateral = Side(border_style=\"medium\", color='000066CC')\n",
+    "borda_tabela = Border(left=estilo_borda_lateral, right= estilo_borda_lateral)\n",
+    "alinhamento_esquerdo = Alignment(horizontal='right', vertical='center')\n",
+    "alinhamento_centralizado = Alignment(horizontal='center', vertical='center')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 51,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Estilos da linha de totais\n",
+    "fonte_total = Font(name='Calibri', size=12, bold=True, italic=False, vertAlign=None, underline='none', strike=False, color='FFFFFF')\n",
+    "cor_celulas_total = PatternFill(\"solid\", fgColor=\"00808080\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 3 - Criando e visualizando o dataframe"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 52,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>budget</th>\n",
+       "      <th>genres</th>\n",
+       "      <th>homepage</th>\n",
+       "      <th>id</th>\n",
+       "      <th>keywords</th>\n",
+       "      <th>original_language</th>\n",
+       "      <th>original_title</th>\n",
+       "      <th>overview</th>\n",
+       "      <th>popularity</th>\n",
+       "      <th>production_companies</th>\n",
+       "      <th>production_countries</th>\n",
+       "      <th>release_date</th>\n",
+       "      <th>revenue</th>\n",
+       "      <th>runtime</th>\n",
+       "      <th>spoken_languages</th>\n",
+       "      <th>status</th>\n",
+       "      <th>tagline</th>\n",
+       "      <th>title</th>\n",
+       "      <th>vote_average</th>\n",
+       "      <th>vote_count</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>237000000</td>\n",
+       "      <td>[{\"id\": 28, \"name\": \"Action\"}, {\"id\": 12, \"nam...</td>\n",
+       "      <td>http://www.avatarmovie.com/</td>\n",
+       "      <td>19995</td>\n",
+       "      <td>[{\"id\": 1463, \"name\": \"culture clash\"}, {\"id\":...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>Avatar</td>\n",
+       "      <td>In the 22nd century, a paraplegic Marine is di...</td>\n",
+       "      <td>150.437577</td>\n",
+       "      <td>[{\"name\": \"Ingenious Film Partners\", \"id\": 289...</td>\n",
+       "      <td>[{\"iso_3166_1\": \"US\", \"name\": \"United States o...</td>\n",
+       "      <td>2009-12-10</td>\n",
+       "      <td>2787965087</td>\n",
+       "      <td>162.0</td>\n",
+       "      <td>[{\"iso_639_1\": \"en\", \"name\": \"English\"}, {\"iso...</td>\n",
+       "      <td>Released</td>\n",
+       "      <td>Enter the World of Pandora.</td>\n",
+       "      <td>Avatar</td>\n",
+       "      <td>7.2</td>\n",
+       "      <td>11800</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>300000000</td>\n",
+       "      <td>[{\"id\": 12, \"name\": \"Adventure\"}, {\"id\": 14, \"...</td>\n",
+       "      <td>http://disney.go.com/disneypictures/pirates/</td>\n",
+       "      <td>285</td>\n",
+       "      <td>[{\"id\": 270, \"name\": \"ocean\"}, {\"id\": 726, \"na...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>Pirates of the Caribbean: At World's End</td>\n",
+       "      <td>Captain Barbossa, long believed to be dead, ha...</td>\n",
+       "      <td>139.082615</td>\n",
+       "      <td>[{\"name\": \"Walt Disney Pictures\", \"id\": 2}, {\"...</td>\n",
+       "      <td>[{\"iso_3166_1\": \"US\", \"name\": \"United States o...</td>\n",
+       "      <td>2007-05-19</td>\n",
+       "      <td>961000000</td>\n",
+       "      <td>169.0</td>\n",
+       "      <td>[{\"iso_639_1\": \"en\", \"name\": \"English\"}]</td>\n",
+       "      <td>Released</td>\n",
+       "      <td>At the end of the world, the adventure begins.</td>\n",
+       "      <td>Pirates of the Caribbean: At World's End</td>\n",
+       "      <td>6.9</td>\n",
+       "      <td>4500</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>245000000</td>\n",
+       "      <td>[{\"id\": 28, \"name\": \"Action\"}, {\"id\": 12, \"nam...</td>\n",
+       "      <td>http://www.sonypictures.com/movies/spectre/</td>\n",
+       "      <td>206647</td>\n",
+       "      <td>[{\"id\": 470, \"name\": \"spy\"}, {\"id\": 818, \"name...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>Spectre</td>\n",
+       "      <td>A cryptic message from Bond’s past sends him o...</td>\n",
+       "      <td>107.376788</td>\n",
+       "      <td>[{\"name\": \"Columbia Pictures\", \"id\": 5}, {\"nam...</td>\n",
+       "      <td>[{\"iso_3166_1\": \"GB\", \"name\": \"United Kingdom\"...</td>\n",
+       "      <td>2015-10-26</td>\n",
+       "      <td>880674609</td>\n",
+       "      <td>148.0</td>\n",
+       "      <td>[{\"iso_639_1\": \"fr\", \"name\": \"Fran\\u00e7ais\"},...</td>\n",
+       "      <td>Released</td>\n",
+       "      <td>A Plan No One Escapes</td>\n",
+       "      <td>Spectre</td>\n",
+       "      <td>6.3</td>\n",
+       "      <td>4466</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>250000000</td>\n",
+       "      <td>[{\"id\": 28, \"name\": \"Action\"}, {\"id\": 80, \"nam...</td>\n",
+       "      <td>http://www.thedarkknightrises.com/</td>\n",
+       "      <td>49026</td>\n",
+       "      <td>[{\"id\": 849, \"name\": \"dc comics\"}, {\"id\": 853,...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>The Dark Knight Rises</td>\n",
+       "      <td>Following the death of District Attorney Harve...</td>\n",
+       "      <td>112.312950</td>\n",
+       "      <td>[{\"name\": \"Legendary Pictures\", \"id\": 923}, {\"...</td>\n",
+       "      <td>[{\"iso_3166_1\": \"US\", \"name\": \"United States o...</td>\n",
+       "      <td>2012-07-16</td>\n",
+       "      <td>1084939099</td>\n",
+       "      <td>165.0</td>\n",
+       "      <td>[{\"iso_639_1\": \"en\", \"name\": \"English\"}]</td>\n",
+       "      <td>Released</td>\n",
+       "      <td>The Legend Ends</td>\n",
+       "      <td>The Dark Knight Rises</td>\n",
+       "      <td>7.6</td>\n",
+       "      <td>9106</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>260000000</td>\n",
+       "      <td>[{\"id\": 28, \"name\": \"Action\"}, {\"id\": 12, \"nam...</td>\n",
+       "      <td>http://movies.disney.com/john-carter</td>\n",
+       "      <td>49529</td>\n",
+       "      <td>[{\"id\": 818, \"name\": \"based on novel\"}, {\"id\":...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>John Carter</td>\n",
+       "      <td>John Carter is a war-weary, former military ca...</td>\n",
+       "      <td>43.926995</td>\n",
+       "      <td>[{\"name\": \"Walt Disney Pictures\", \"id\": 2}]</td>\n",
+       "      <td>[{\"iso_3166_1\": \"US\", \"name\": \"United States o...</td>\n",
+       "      <td>2012-03-07</td>\n",
+       "      <td>284139100</td>\n",
+       "      <td>132.0</td>\n",
+       "      <td>[{\"iso_639_1\": \"en\", \"name\": \"English\"}]</td>\n",
+       "      <td>Released</td>\n",
+       "      <td>Lost in our world, found in another.</td>\n",
+       "      <td>John Carter</td>\n",
+       "      <td>6.1</td>\n",
+       "      <td>2124</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "      budget                                             genres  \\\n",
+       "0  237000000  [{\"id\": 28, \"name\": \"Action\"}, {\"id\": 12, \"nam...   \n",
+       "1  300000000  [{\"id\": 12, \"name\": \"Adventure\"}, {\"id\": 14, \"...   \n",
+       "2  245000000  [{\"id\": 28, \"name\": \"Action\"}, {\"id\": 12, \"nam...   \n",
+       "3  250000000  [{\"id\": 28, \"name\": \"Action\"}, {\"id\": 80, \"nam...   \n",
+       "4  260000000  [{\"id\": 28, \"name\": \"Action\"}, {\"id\": 12, \"nam...   \n",
+       "\n",
+       "                                       homepage      id  \\\n",
+       "0                   http://www.avatarmovie.com/   19995   \n",
+       "1  http://disney.go.com/disneypictures/pirates/     285   \n",
+       "2   http://www.sonypictures.com/movies/spectre/  206647   \n",
+       "3            http://www.thedarkknightrises.com/   49026   \n",
+       "4          http://movies.disney.com/john-carter   49529   \n",
+       "\n",
+       "                                            keywords original_language  \\\n",
+       "0  [{\"id\": 1463, \"name\": \"culture clash\"}, {\"id\":...                en   \n",
+       "1  [{\"id\": 270, \"name\": \"ocean\"}, {\"id\": 726, \"na...                en   \n",
+       "2  [{\"id\": 470, \"name\": \"spy\"}, {\"id\": 818, \"name...                en   \n",
+       "3  [{\"id\": 849, \"name\": \"dc comics\"}, {\"id\": 853,...                en   \n",
+       "4  [{\"id\": 818, \"name\": \"based on novel\"}, {\"id\":...                en   \n",
+       "\n",
+       "                             original_title  \\\n",
+       "0                                    Avatar   \n",
+       "1  Pirates of the Caribbean: At World's End   \n",
+       "2                                   Spectre   \n",
+       "3                     The Dark Knight Rises   \n",
+       "4                               John Carter   \n",
+       "\n",
+       "                                            overview  popularity  \\\n",
+       "0  In the 22nd century, a paraplegic Marine is di...  150.437577   \n",
+       "1  Captain Barbossa, long believed to be dead, ha...  139.082615   \n",
+       "2  A cryptic message from Bond’s past sends him o...  107.376788   \n",
+       "3  Following the death of District Attorney Harve...  112.312950   \n",
+       "4  John Carter is a war-weary, former military ca...   43.926995   \n",
+       "\n",
+       "                                production_companies  \\\n",
+       "0  [{\"name\": \"Ingenious Film Partners\", \"id\": 289...   \n",
+       "1  [{\"name\": \"Walt Disney Pictures\", \"id\": 2}, {\"...   \n",
+       "2  [{\"name\": \"Columbia Pictures\", \"id\": 5}, {\"nam...   \n",
+       "3  [{\"name\": \"Legendary Pictures\", \"id\": 923}, {\"...   \n",
+       "4        [{\"name\": \"Walt Disney Pictures\", \"id\": 2}]   \n",
+       "\n",
+       "                                production_countries release_date     revenue  \\\n",
+       "0  [{\"iso_3166_1\": \"US\", \"name\": \"United States o...   2009-12-10  2787965087   \n",
+       "1  [{\"iso_3166_1\": \"US\", \"name\": \"United States o...   2007-05-19   961000000   \n",
+       "2  [{\"iso_3166_1\": \"GB\", \"name\": \"United Kingdom\"...   2015-10-26   880674609   \n",
+       "3  [{\"iso_3166_1\": \"US\", \"name\": \"United States o...   2012-07-16  1084939099   \n",
+       "4  [{\"iso_3166_1\": \"US\", \"name\": \"United States o...   2012-03-07   284139100   \n",
+       "\n",
+       "   runtime                                   spoken_languages    status  \\\n",
+       "0    162.0  [{\"iso_639_1\": \"en\", \"name\": \"English\"}, {\"iso...  Released   \n",
+       "1    169.0           [{\"iso_639_1\": \"en\", \"name\": \"English\"}]  Released   \n",
+       "2    148.0  [{\"iso_639_1\": \"fr\", \"name\": \"Fran\\u00e7ais\"},...  Released   \n",
+       "3    165.0           [{\"iso_639_1\": \"en\", \"name\": \"English\"}]  Released   \n",
+       "4    132.0           [{\"iso_639_1\": \"en\", \"name\": \"English\"}]  Released   \n",
+       "\n",
+       "                                          tagline  \\\n",
+       "0                     Enter the World of Pandora.   \n",
+       "1  At the end of the world, the adventure begins.   \n",
+       "2                           A Plan No One Escapes   \n",
+       "3                                 The Legend Ends   \n",
+       "4            Lost in our world, found in another.   \n",
+       "\n",
+       "                                      title  vote_average  vote_count  \n",
+       "0                                    Avatar           7.2       11800  \n",
+       "1  Pirates of the Caribbean: At World's End           6.9        4500  \n",
+       "2                                   Spectre           6.3        4466  \n",
+       "3                     The Dark Knight Rises           7.6        9106  \n",
+       "4                               John Carter           6.1        2124  "
+      ]
+     },
+     "execution_count": 52,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Criando o dataframe e visualizando suas primeiras linhas\n",
+    "dataframe = pd.read_csv(\"tmdb_5000_movies.csv\")\n",
+    "dataframe.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 53,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(4803, 20)"
+      ]
+     },
+     "execution_count": 53,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Formato do dataframe\n",
+    "dataframe.shape"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 4 - Adaptando o dataframe para algo legível no excel"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 54,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Vamos trabalhar na integração com a biblioteca pandas para já construir as tabelas com valores\n",
+    "# https://openpyxl.readthedocs.io/en/stable/pandas.html\n",
+    "# Vou usar uma base de dados do seguinte repositório: https://raw.githubusercontent.com/WLAraujo/python_PLN/main/Dados/tmdb_5000_movies.csv\n",
+    "from openpyxl.utils.dataframe import dataframe_to_rows"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 55,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Usando a função importada\n",
+    "linhas_df = dataframe_to_rows(dataframe, header = True, index = False)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 5 - Transcrevendo os dados do dataframe para a planilha"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 56,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "for linha in linhas_df:\n",
+    "    ws.append(linha)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 6 - Estilizando o cabeçalho"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 57,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "for ind_coluna in range(1, dataframe.shape[1] + 1):\n",
+    "    # Definindo célula que será alterada na iteração\n",
+    "    celula = ws.cell(row=1, column=ind_coluna)\n",
+    "    # Estilizando a célula\n",
+    "    celula.font = fonte_cabecalho\n",
+    "    celula.fill = cor_celulas_cabecalho\n",
+    "    celula.alignment = alinhamento_centralizado\n",
+    "    celula.border = borda_cabecalho"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 7 - Estilizando as células de dados"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 58,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "for ind_coluna in range(1, dataframe.shape[1] + 1):\n",
+    "    for ind_linha in range(2, dataframe.shape[0] + 2):\n",
+    "        ws.cell(row=ind_linha, column=ind_coluna).font = fonte_tabela\n",
+    "        ws.cell(row=ind_linha, column=ind_coluna).border = borda_tabela\n",
+    "        ws.cell(row=ind_linha, column=ind_coluna).alignment = alinhamento_centralizado\n",
+    "        ws.cell(row=ind_linha, column=ind_coluna).fill = cor_celulas__tabela"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 8 - Aplicando uma função no excel para calcular total e média"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 59,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Calculando o total de verba para os filmes\n",
+    "ws.cell(row=dataframe.shape[0]+2, column=1).value = f\"=SUM(A2:A{dataframe.shape[0]+1})\"\n",
+    "# Calculando a média das notas dos filmes\n",
+    "ws.cell(row=dataframe.shape[0]+2, column=19).value = f\"=AVERAGE(S2:S{dataframe.shape[0]+1})\""
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# 9 - Estilizando a linha de totais"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 60,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Definindo função que adiciona linha de total\n",
+    "for coluna in range(1,21):\n",
+    "    ws.cell(row=dataframe.shape[0]+2, column=coluna).fill = cor_celulas_total\n",
+    "    ws.cell(row=dataframe.shape[0]+2, column=coluna).font = fonte_total"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# 10 - Salvando o resultado em um arquivo .xlsx"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 61,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Salvando um worksheet intermediário\n",
+    "arquivo.save(filename='Planilha Filmes.xlsx')"
+   ]
+  }
+ ],
+ "metadata": {
+  "interpreter": {
+   "hash": "916dbcbb3f70747c44a77c7bcd40155683ae19c65e1c03b4aa3499c5328201f1"
+  },
+  "kernelspec": {
+   "display_name": "Python 3.8.10 64-bit",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  },
+  "orig_nbformat": 4
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
